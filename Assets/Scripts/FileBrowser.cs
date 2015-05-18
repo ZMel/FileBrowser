@@ -17,18 +17,31 @@ public class FileBrowser : MonoBehaviour
 	string rootPath;
 	string currentDirectory;
 	ArrayList nodes;
+	char slash;
 
 	void Start (){
 	
 		nodes = new ArrayList();
 
-		rootPath = "/Users/";
+		// Using windows
+		rootPath = "C:\\Users\\Zac";
+		currentDirectory = "C:\\Users\\Zac\\Dropbox";
+		slash = '\\';
+
+		if (!System.IO.Directory.Exists (rootPath)) {
+
+			// Using unix
+			rootPath = "/Users/Zac";
+			currentDirectory = "/Users/Zac/Dropbox";
+			slash = '/';
+		}
+	
 		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
 		backNode.GetComponent<TreeNode>().setId(rootPath);
 		backNode.GetComponent<TreeNode>().setPath(rootPath);
 		backNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Back);
 
-		currentDirectory = "/Users/Zac/Desktop/"; 
+
 		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, 0), Quaternion.identity);
 		rootNode.GetComponent<TreeNode>().setId(currentDirectory);
 		rootNode.GetComponent<TreeNode>().setPath(currentDirectory);
@@ -51,10 +64,10 @@ public class FileBrowser : MonoBehaviour
 
 		// Reset the back node
 		rootPath = "";
-		string [] newPath = newNode.path.Split('/');
+		string [] newPath = newNode.path.Split(slash);
 		for(int i = 0; i < newPath.Length - cutoffPoint; i++)
 		{
-			rootPath += newPath[i] + "/";
+			rootPath += newPath[i] + slash.ToString();
 		}
 
 		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
@@ -110,7 +123,7 @@ public class FileBrowser : MonoBehaviour
 
 				// Iterate through the folders
 				foreach (string str in subDirs) {
-					string [] path = str.Split('/');
+					string [] path = str.Split(slash);
 
 					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
 					folderNode.GetComponent<TreeNode>().setId(path[path.Length - 1]);
