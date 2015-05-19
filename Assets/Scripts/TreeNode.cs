@@ -12,6 +12,16 @@ public class TreeNode : MonoBehaviour
 	public enum FileType {RootNode, Folder, File, Back};
 	public TreeNode Parent { get; private set; }
 	private Dictionary<string, TreeNode> _children = new Dictionary<string, TreeNode>();
+	public GameObject parent;
+
+	void Start()
+	{
+		if(fileType == FileType.RootNode && parent != null)
+		{
+			transform.GetComponent<LineRenderer>().SetPosition(0, parent.transform.position);
+			transform.GetComponent<LineRenderer>().SetPosition(1, transform.position);
+		}
+	}
 
 	// Mutators
 	public void setId(string id)
@@ -75,13 +85,16 @@ public class TreeNode : MonoBehaviour
 	// Actions
 	void OnMouseDown(){
 
+
+
 		if (fileType == TreeNode.FileType.RootNode) {
-			Debug.Log("RootNode");
-		} else if ((fileType == TreeNode.FileType.Folder) || (fileType == TreeNode.FileType.Back)) {
-			GameObject.Find("Controller").GetComponent<FileBrowser>().reload(this);
+			Vector3 position = new Vector3 ( transform.position.x, transform.position.y, transform.position.z - 100f);
+			Camera.main.transform.position = position;
+		} /*else if ((fileType == TreeNode.FileType.Folder) || (fileType == TreeNode.FileType.Back)) {
+			//GameObject.Find("Controller").GetComponent<FileBrowser>().reload(this);
 
 		} else if (fileType == TreeNode.FileType.File){
-			Debug.Log("File");
-		}
+			//Debug.Log("File");
+		}*/
 	}   
 }

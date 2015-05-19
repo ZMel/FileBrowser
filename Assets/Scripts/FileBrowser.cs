@@ -14,14 +14,24 @@ public class FileBrowser : MonoBehaviour
 
 	GameObject rootNode;
 	GameObject backNode;
+	GameObject homeNode;
 	string rootPath;
 	string currentDirectory;
 	ArrayList nodes;
 	char slash;
+	public Vector3 []folderPositions = new Vector3[20];
+	public Vector3 []filePositions = new Vector3[20];
+	public GameObject [] folderParents = new GameObject[3];
+	public Rays rays;
+
+	int folderCount = 0;
+	int fileCount = 0;
+
 
 	void Start (){
 	
 		nodes = new ArrayList();
+		rays = Camera.main.GetComponent<Rays> ();
 
 		// Using windows
 		rootPath = "C:\\Users\\Zac";
@@ -31,24 +41,70 @@ public class FileBrowser : MonoBehaviour
 		if (!System.IO.Directory.Exists (rootPath)) {
 
 			// Using unix
-			rootPath = "/Users/Zac";
-			currentDirectory = "/Users/Zac/Dropbox";
+			rootPath = "/Users/Zac/Desktop";
+			currentDirectory = "/Users/Zac/Desktop/HCI Test";
 			slash = '/';
 		}
 	
+		/*
 		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
 		backNode.GetComponent<TreeNode>().setId(rootPath);
 		backNode.GetComponent<TreeNode>().setPath(rootPath);
 		backNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Back);
+		*/
 
-
-		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, 0), Quaternion.identity);
+		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
 		rootNode.GetComponent<TreeNode>().setId(currentDirectory);
 		rootNode.GetComponent<TreeNode>().setPath(currentDirectory);
 		rootNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.RootNode);
-		//rootNode.GetComponentInChildren<TextMesh> ().text = "Desktop";
-		
+		homeNode = rootNode;
+		Camera.main.transform.GetComponent<ClickScript> ().homeFolder = homeNode;
+
 		TraverseTree (currentDirectory);
+		int count = 0;
+		int count2 = 0;
+
+		// Children
+		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 60f, rootNode.transform.position.y +50F, 100), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)nodes[0];
+		foreach(GameObject currentNode in nodes)
+		{//jenna is amazing
+
+			if(count == 0 || count == 1 || count == 2)
+			{
+				folderParents[count2] = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +60f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+				count2++;
+			}else{
+				Instantiate(currentNode, new Vector3(currentNode.transform.position.x +60f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+			}
+
+			count++;
+		}
+
+		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 60f, rootNode.transform.position.y -50F,100), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)nodes[3];
+		foreach(GameObject currentNode in nodes)
+		{
+			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 60f, currentNode.transform.position.y - 50f, 100), Quaternion.identity);
+		}
+
+
+		// Child of child
+		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y +120f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[0];
+		foreach(GameObject currentNode in nodes)
+		{
+			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y+ 120f, 200), Quaternion.identity);
+		}
+
+		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y + 60f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[1];
+		foreach(GameObject currentNode in nodes)
+		{
+			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y + 60f, 200), Quaternion.identity);
+		}
+
+		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y+ 0f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[2];
+		foreach(GameObject currentNode in nodes)
+		{
+			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y+ 0f, 200), Quaternion.identity);
+		}
 	}
 
 	public void reload(TreeNode newNode)
@@ -62,6 +118,7 @@ public class FileBrowser : MonoBehaviour
 			cutoffPoint = 2;
 		}
 
+		/*
 		// Reset the back node
 		rootPath = "";
 		string [] newPath = newNode.path.Split(slash);
@@ -70,14 +127,17 @@ public class FileBrowser : MonoBehaviour
 			rootPath += newPath[i] + slash.ToString();
 		}
 
+
 		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
 		backNode.GetComponent<TreeNode>().setId(rootPath);
 		backNode.GetComponent<TreeNode>().setPath(rootPath);
 		backNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Back);
+		*/
 
 		// Reset the root node
+
 		currentDirectory = newNode.path;
-		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, 0), Quaternion.identity);
+		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
 		rootNode.GetComponent<TreeNode> ().setId (newNode.ID);
 		rootNode.GetComponent<TreeNode>().setPath(currentDirectory);
 		rootNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.RootNode);
@@ -125,29 +185,34 @@ public class FileBrowser : MonoBehaviour
 				foreach (string str in subDirs) {
 					string [] path = str.Split(slash);
 
-					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
+					
+					Vector3 position = folderPositions[folderCount];
+					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, position, Quaternion.identity);
 					folderNode.GetComponent<TreeNode>().setId(path[path.Length - 1]);
 					folderNode.GetComponent<TreeNode>().setPath(str);
 					folderNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Folder);
-					//folderNode.GetComponentInChildren<TextMesh> ().text = path[path.Length - 1];
-					
+					folderNode.GetComponentInChildren<TextMesh> ().text = path[path.Length - 1];
+
 					rootNode.GetComponent<TreeNode>().addChild (folderNode);
 					nodes.Add(folderNode);
+					folderCount++;
 				}
 
 				// Iterate through the files
 				foreach (string fileName in files) {
 
 					System.IO.FileInfo fi = new System.IO.FileInfo (fileName);
+					Vector3 position = filePositions[fileCount];
 
-					GameObject fileNode = (GameObject)Instantiate(file.gameObject, new Vector3(0, 0, -10), Quaternion.identity);
+					GameObject fileNode = (GameObject)Instantiate(file.gameObject, position, Quaternion.identity);
 					fileNode.GetComponent<TreeNode>().setId(fi.Name);
 					fileNode.GetComponent<TreeNode>().setPath(currentDirectory + fi.Name);
 					fileNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.File);
-					//fileNode.GetComponentInChildren<TextMesh> ().text = fi.Name;
-					
+					fileNode.GetComponentInChildren<TextMesh> ().text = fi.Name;
+
 					rootNode.GetComponent<TreeNode>().addChild (fileNode);
 					nodes.Add(fileNode);
+					fileCount++;
 				}
 			}
 
