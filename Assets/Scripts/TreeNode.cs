@@ -19,14 +19,16 @@ public class TreeNode : MonoBehaviour
 		if(fileType == FileType.RootNode && parent != null)
 		{
 			Vector3 position = parent.transform.position;
-			position.z += 5;
+			//position.z += 5;
 
 			transform.GetComponent<LineRenderer>().SetPosition(0, position);
+			transform.GetComponent<LineRenderer>().sortingOrder = -2;
 
 			position = transform.position;
-			position.z += 5;
+			//position.z += 5;
 
 			transform.GetComponent<LineRenderer>().SetPosition(1, position);
+			transform.GetComponent<LineRenderer>().sortingOrder = -2;
 		}
 	}
 
@@ -35,14 +37,16 @@ public class TreeNode : MonoBehaviour
 		parent = _parent;
 
 		Vector3 position = parent.transform.position;
-		position.z += 5;
+		//position.z += 5;
 		
 		transform.GetComponent<LineRenderer>().SetPosition(0, position);
-		
+		transform.GetComponent<LineRenderer>().sortingOrder = -2;
+
 		position = transform.position;
-		position.z += 5;
+		//position.z += 5;
 		
 		transform.GetComponent<LineRenderer>().SetPosition(1, position);
+		transform.GetComponent<LineRenderer>().sortingOrder = -2;
 	}
 
 	// Mutators
