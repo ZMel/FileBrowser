@@ -5,8 +5,8 @@ public class Zoom : MonoBehaviour {
 
 	float minFov = 15f;
 	float maxFov = 90f;
-	float sensitivity = 10f;
-	float sensitivity2 = -2f;
+	float sensitivity = 70f;
+	float sensitivity2 = -5f;
 
 	void Update () {
 

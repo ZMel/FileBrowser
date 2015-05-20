@@ -34,8 +34,8 @@ public class FileBrowser : MonoBehaviour
 		rays = Camera.main.GetComponent<Rays> ();
 
 		// Using windows
-		rootPath = "C:\\Users\\Zac";
-		currentDirectory = "C:\\Users\\Zac\\Dropbox";
+		rootPath = "C:\\Users\\Zac\\Documents\\file-browser";
+		currentDirectory = "C:\\Users\\Zac\\Documents\\file-browser\\HCI Test";
 		slash = '\\';
 
 		if (!System.IO.Directory.Exists (rootPath)) {
@@ -59,6 +59,7 @@ public class FileBrowser : MonoBehaviour
 		rootNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.RootNode);
 		homeNode = rootNode;
 		Camera.main.transform.GetComponent<ClickScript> ().homeFolder = homeNode;
+		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[0] = rootNode;
 
 		TraverseTree (currentDirectory);
 		int count = 0;
@@ -69,13 +70,25 @@ public class FileBrowser : MonoBehaviour
 		GameObject currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 100f, rootNode.transform.position.y + 50F, 100), Quaternion.identity);
 		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)nodes[0];
 		Camera.main.transform.GetComponent<ClickScript> ().favourite1 = currentRoot;
+		
+		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[0] = (GameObject)nodes[0];
+		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[2] = currentRoot;
 
 		foreach(GameObject currentNode in nodes)
 		{
+
 			if(count == 0 || count == 1 || count == 2)
 			{
 				folderParents[count2] = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
 				folderParents[count2].transform.GetComponent<TreeNode>().parent = currentRoot;
+
+
+				if(count == 1)
+				{
+					Camera.main.transform.GetComponent<ClickScript> ().searchFiles[3] = folderParents[count2];
+				}
+				
+
 				count2++;
 			}else{
 				thisNode =  (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
@@ -101,6 +114,8 @@ public class FileBrowser : MonoBehaviour
 
 		foreach(GameObject currentNode in nodes)
 		{
+
+
 			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 120f, 200), Quaternion.identity);
 			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 		}
@@ -108,10 +123,20 @@ public class FileBrowser : MonoBehaviour
 		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 60f, 200), Quaternion.identity);
 		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[1];
 		Camera.main.transform.GetComponent<ClickScript> ().favourite2 = currentRoot;
+		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[5] = currentRoot;
+
+		count = 0;
 		foreach(GameObject currentNode in nodes)
 		{
 			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y + 60f, 200), Quaternion.identity);
 			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
+
+			if(count == 2)
+			{
+				Camera.main.transform.GetComponent<ClickScript> ().searchFiles[4] = thisNode;
+			}
+
+			count++;
 		}
 
 		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 0f, 200), Quaternion.identity);
@@ -216,6 +241,8 @@ public class FileBrowser : MonoBehaviour
 					folderCount++;
 				}
 
+
+
 				// Iterate through the files
 				foreach (string fileName in files) {
 
@@ -228,6 +255,8 @@ public class FileBrowser : MonoBehaviour
 					fileNode.GetComponent<TreeNode>().setPath(currentDirectory + fi.Name);
 					fileNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.File);
 					fileNode.GetComponentInChildren<TextMesh> ().text = fi.Name;
+
+
 
 					rootNode.GetComponent<TreeNode>().addChild (fileNode);
 					nodes.Add(fileNode);
