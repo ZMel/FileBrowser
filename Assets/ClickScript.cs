@@ -30,6 +30,14 @@ public class ClickScript : MonoBehaviour {
 					Vector3 position = new Vector3(homeFolder.transform.position.x,homeFolder.transform.position.y,homeFolder.transform.position.z - 75.1f);
 					Camera.main.transform.position = position;
 					break;
+				case "Folder 1":	
+					position = new Vector3(favourite1.transform.position.x,favourite1.transform.position.y,favourite1.transform.position.z - 75.1f);
+					Camera.main.transform.position = position;
+					break;
+				case "Folder 2":	
+					position = new Vector3(favourite2.transform.position.x,favourite2.transform.position.y,favourite2.transform.position.z - 75.1f);
+					Camera.main.transform.position = position;
+					break;
 				}
 			}
 		}

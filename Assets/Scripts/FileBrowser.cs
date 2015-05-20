@@ -65,45 +65,62 @@ public class FileBrowser : MonoBehaviour
 		int count2 = 0;
 
 		// Children
-		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 60f, rootNode.transform.position.y +50F, 100), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)nodes[0];
-		foreach(GameObject currentNode in nodes)
-		{//jenna is amazing
+		GameObject thisNode;
+		GameObject currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 100f, rootNode.transform.position.y + 50F, 100), Quaternion.identity);
+		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)nodes[0];
+		Camera.main.transform.GetComponent<ClickScript> ().favourite1 = currentRoot;
 
+		foreach(GameObject currentNode in nodes)
+		{
 			if(count == 0 || count == 1 || count == 2)
 			{
-				folderParents[count2] = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +60f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+				folderParents[count2] = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+				folderParents[count2].transform.GetComponent<TreeNode>().parent = currentRoot;
 				count2++;
 			}else{
-				Instantiate(currentNode, new Vector3(currentNode.transform.position.x +60f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+				thisNode =  (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
+				thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 			}
 
 			count++;
 		}
 
-		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 60f, rootNode.transform.position.y -50F,100), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)nodes[3];
+		currentRoot = (GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 100f, rootNode.transform.position.y -50F,100), Quaternion.identity);
+		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)nodes[3];
+
 		foreach(GameObject currentNode in nodes)
 		{
-			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 60f, currentNode.transform.position.y - 50f, 100), Quaternion.identity);
+			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 100f, currentNode.transform.position.y - 50f, 100), Quaternion.identity);
+			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 		}
 
 
 		// Child of child
-		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y +120f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[0];
+		currentRoot = (GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 300f, rootNode.transform.position.y +120f, 200), Quaternion.identity);
+		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[0];
+
 		foreach(GameObject currentNode in nodes)
 		{
-			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y+ 120f, 200), Quaternion.identity);
+			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 120f, 200), Quaternion.identity);
+			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 		}
 
-		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y + 60f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[1];
+		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 60f, 200), Quaternion.identity);
+		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[1];
+		Camera.main.transform.GetComponent<ClickScript> ().favourite2 = currentRoot;
 		foreach(GameObject currentNode in nodes)
 		{
-			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y + 60f, 200), Quaternion.identity);
+			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y + 60f, 200), Quaternion.identity);
+			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 		}
 
-		((GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 120f, rootNode.transform.position.y+ 0f, 200), Quaternion.identity)).transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[2];
+		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 0f, 200), Quaternion.identity);
+		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[2];
+
 		foreach(GameObject currentNode in nodes)
 		{
-			Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 120f, currentNode.transform.position.y+ 0f, 200), Quaternion.identity);
+			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 0f, 200), Quaternion.identity);
+			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
 		}
 	}
 
@@ -188,6 +205,7 @@ public class FileBrowser : MonoBehaviour
 					
 					Vector3 position = folderPositions[folderCount];
 					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, position, Quaternion.identity);
+					folderNode.GetComponent<TreeNode>().drawLine(rootNode);
 					folderNode.GetComponent<TreeNode>().setId(path[path.Length - 1]);
 					folderNode.GetComponent<TreeNode>().setPath(str);
 					folderNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Folder);
@@ -205,6 +223,7 @@ public class FileBrowser : MonoBehaviour
 					Vector3 position = filePositions[fileCount];
 
 					GameObject fileNode = (GameObject)Instantiate(file.gameObject, position, Quaternion.identity);
+					fileNode.GetComponent<TreeNode>().drawLine(rootNode);
 					fileNode.GetComponent<TreeNode>().setId(fi.Name);
 					fileNode.GetComponent<TreeNode>().setPath(currentDirectory + fi.Name);
 					fileNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.File);

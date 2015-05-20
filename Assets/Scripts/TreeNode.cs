@@ -18,9 +18,31 @@ public class TreeNode : MonoBehaviour
 	{
 		if(fileType == FileType.RootNode && parent != null)
 		{
-			transform.GetComponent<LineRenderer>().SetPosition(0, parent.transform.position);
-			transform.GetComponent<LineRenderer>().SetPosition(1, transform.position);
+			Vector3 position = parent.transform.position;
+			position.z += 5;
+
+			transform.GetComponent<LineRenderer>().SetPosition(0, position);
+
+			position = transform.position;
+			position.z += 5;
+
+			transform.GetComponent<LineRenderer>().SetPosition(1, position);
 		}
+	}
+
+	public void drawLine(GameObject _parent)
+	{
+		parent = _parent;
+
+		Vector3 position = parent.transform.position;
+		position.z += 5;
+		
+		transform.GetComponent<LineRenderer>().SetPosition(0, position);
+		
+		position = transform.position;
+		position.z += 5;
+		
+		transform.GetComponent<LineRenderer>().SetPosition(1, position);
 	}
 
 	// Mutators
