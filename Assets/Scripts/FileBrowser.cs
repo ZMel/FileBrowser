@@ -41,8 +41,8 @@ public class FileBrowser : MonoBehaviour
 		if (!System.IO.Directory.Exists (rootPath)) {
 
 			// Using unix
-			rootPath = "/Users/Zac/Desktop";
-			currentDirectory = "/Users/Zac/Desktop/HCI Test Moderate";
+			rootPath = "/Users/Zac/Documents/file-browser";
+			currentDirectory = "/Users/Zac/Documents/file-browser/HCI Test Moderate";
 			slash = '/';
 		}
 	
@@ -65,6 +65,7 @@ public class FileBrowser : MonoBehaviour
 		int count = 0;
 		int count2 = 0;
 
+		/*
 		// Children
 		GameObject thisNode;
 		GameObject currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 100f, rootNode.transform.position.y + 50F, 100), Quaternion.identity);
@@ -146,7 +147,7 @@ public class FileBrowser : MonoBehaviour
 		{
 			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 0f, 200), Quaternion.identity);
 			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-		}
+		}*/
 	}
 
 	public void reload(TreeNode newNode)
@@ -203,41 +204,48 @@ public class FileBrowser : MonoBehaviour
 
 	public void TraverseTree (string root){
 
-		try {
+		GameObject currentNode = rootNode;
 
-			Stack<string> dirs = new Stack<string> ();
+		//try {
+
+			Stack<GameObject> dirs = new Stack<GameObject> ();
 		
 			if (!System.IO.Directory.Exists (root)) {
 				Debug.Log ("Root doesnt exist");
 				throw new ArgumentException ();
 			}
-			dirs.Push (root);
+
+			dirs.Push (rootNode);
 		
 			while (dirs.Count > 0) {
 
 				// Get the file and folders (Sub-directories)
 				string[] subDirs;
 				string[] files = null;
-				string currentDir = dirs.Pop ();
+				string currentDir = dirs.Pop ().GetComponent<TreeNode>().path;
 
 				subDirs = System.IO.Directory.GetDirectories (currentDir);
 				files = System.IO.Directory.GetFiles (currentDir);
 
 				// Iterate through the folders
 				foreach (string str in subDirs) {
+
+					Debug.Log (str);
+
 					string [] path = str.Split(slash);
 
-					
-					Vector3 position = folderPositions[folderCount];
+					//Vector3 position = folderPositions[folderCount];
+					Vector3 position = folderPositions[0];
 					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, position, Quaternion.identity);
-					folderNode.GetComponent<TreeNode>().drawLine(rootNode);
+					folderNode.GetComponent<TreeNode>().drawLine(currentNode);
 					folderNode.GetComponent<TreeNode>().setId(path[path.Length - 1]);
 					folderNode.GetComponent<TreeNode>().setPath(str);
 					folderNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Folder);
 					folderNode.GetComponentInChildren<TextMesh> ().text = path[path.Length - 1];
 
-					rootNode.GetComponent<TreeNode>().addChild (folderNode);
+					currentNode.GetComponent<TreeNode>().addChild (folderNode);
 					nodes.Add(folderNode);
+					dirs.Push(folderNode);
 					folderCount++;
 				}
 
@@ -247,7 +255,8 @@ public class FileBrowser : MonoBehaviour
 				foreach (string fileName in files) {
 
 					System.IO.FileInfo fi = new System.IO.FileInfo (fileName);
-					Vector3 position = filePositions[fileCount];
+					//Vector3 position = filePositions[fileCount];
+				Vector3 position = filePositions[0];
 
 					GameObject fileNode = (GameObject)Instantiate(file.gameObject, position, Quaternion.identity);
 					fileNode.GetComponent<TreeNode>().drawLine(rootNode);
@@ -256,15 +265,16 @@ public class FileBrowser : MonoBehaviour
 					fileNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.File);
 					fileNode.GetComponentInChildren<TextMesh> ().text = fi.Name;
 
-
-
-					rootNode.GetComponent<TreeNode>().addChild (fileNode);
+					currentNode.GetComponent<TreeNode>().addChild (fileNode);
 					nodes.Add(fileNode);
 					fileCount++;
 				}
+
+				//currentNode = currentNode.GetComponent<TreeNode>().getChild(folderNode);
 			}
 
-		} catch (Exception e) {
+	/*
+	 * 	} catch (Exception e) {
 
 			if (e is UnauthorizedAccessException || e is System.IO.DirectoryNotFoundException) {
 				Debug.Log ("An error has occured: " + e.Message);
@@ -272,7 +282,10 @@ public class FileBrowser : MonoBehaviour
 				Debug.Log ("A general error has occured: " + e.Message);
 			}
 		}
+			 */
 
+
+		rootNode = currentNode;
 
 	}
 }
