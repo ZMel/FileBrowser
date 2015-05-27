@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/TreeNode.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../DinoRun/Assets/Scripts/GameControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rays.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/TreeNode.cs" Line="49" Column="60" />
+      <File FileName="../DinoRun/Assets/Scripts/Doom.cs" Line="11" Column="2" />
+      <File FileName="../DinoRun/Assets/Scripts/GameControl.cs" Line="68" Column="17" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

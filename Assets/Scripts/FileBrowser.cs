@@ -42,7 +42,7 @@ public class FileBrowser : MonoBehaviour
 
 			// Using unix
 			rootPath = "/Users/Zac/Desktop";
-			currentDirectory = "/Users/Zac/Desktop/HCI Test";
+			currentDirectory = "/Users/Zac/Desktop/HCI Test Moderate";
 			slash = '/';
 		}
 	
