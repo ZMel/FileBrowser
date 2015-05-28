@@ -1,9 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../DinoRun/Assets/Scripts/GameControl.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\FileBrowser.cs">
     <Files>
-      <File FileName="../DinoRun/Assets/Scripts/Doom.cs" Line="11" Column="2" />
-      <File FileName="../DinoRun/Assets/Scripts/GameControl.cs" Line="68" Column="17" />
+      <File FileName="Assets\Scripts\Rays.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\FileObject.cs" Line="21" Column="1" />
+      <File FileName="Assets\Scripts\FileBrowser.cs" Line="51" Column="1" />
+      <File FileName="Assets\Scripts\TreeNode.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ClickScript.cs" Line="37" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

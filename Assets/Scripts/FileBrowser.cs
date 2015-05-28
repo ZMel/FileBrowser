@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,7 +12,6 @@ public class FileBrowser : MonoBehaviour
 	public Transform file;
 	public Transform folder;
 	public Transform back;
-
 	GameObject rootNode;
 	GameObject backNode;
 	GameObject homeNode;
@@ -19,23 +19,23 @@ public class FileBrowser : MonoBehaviour
 	string currentDirectory;
 	ArrayList nodes;
 	char slash;
-	public Vector3 []folderPositions = new Vector3[20];
-	public Vector3 []filePositions = new Vector3[20];
-	public GameObject [] folderParents = new GameObject[3];
+	public Vector3[]positions = new Vector3[9];
+	public Vector3[]folderPositions = new Vector3[20];
+	public Vector3[]filePositions = new Vector3[20];
+	public GameObject[] folderParents = new GameObject[3];
 	public Rays rays;
-
 	int folderCount = 0;
 	int fileCount = 0;
 
-
-	void Start (){
+	void Start ()
+	{
 	
-		nodes = new ArrayList();
+		nodes = new ArrayList ();
 		rays = Camera.main.GetComponent<Rays> ();
 
 		// Using windows
 		rootPath = "C:\\Users\\Zac\\Documents\\file-browser";
-		currentDirectory = "C:\\Users\\Zac\\Documents\\file-browser\\HCI Test";
+		currentDirectory = "C:\\Users\\Zac\\Documents\\file-browser\\HCI Test Moderate";
 		slash = '\\';
 
 		if (!System.IO.Directory.Exists (rootPath)) {
@@ -45,112 +45,25 @@ public class FileBrowser : MonoBehaviour
 			currentDirectory = "/Users/Zac/Documents/file-browser/HCI Test Moderate";
 			slash = '/';
 		}
-	
-		/*
-		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
-		backNode.GetComponent<TreeNode>().setId(rootPath);
-		backNode.GetComponent<TreeNode>().setPath(rootPath);
-		backNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Back);
-		*/
 
-		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
-		rootNode.GetComponent<TreeNode>().setId(currentDirectory);
-		rootNode.GetComponent<TreeNode>().setPath(currentDirectory);
-		rootNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.RootNode);
+		rootPath = PlayerPrefs.GetString ("rootPath");
+		currentDirectory = PlayerPrefs.GetString ("currentDirectory");
+
+		rootNode = (GameObject)Instantiate (rootFolder.gameObject, new Vector3 (0, 0, -5), Quaternion.identity);
+		rootNode.GetComponent<TreeNode> ().setId (currentDirectory);
+		rootNode.GetComponent<TreeNode> ().setPath (currentDirectory);
+		rootNode.GetComponent<TreeNode> ().setFileType (TreeNode.FileType.RootNode);
 		homeNode = rootNode;
 		Camera.main.transform.GetComponent<ClickScript> ().homeFolder = homeNode;
-		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[0] = rootNode;
+		Camera.main.transform.GetComponent<ClickScript> ().searchFiles [0] = rootNode;
 
 		TraverseTree (currentDirectory);
-		int count = 0;
-		int count2 = 0;
 
-		/*
-		// Children
-		GameObject thisNode;
-		GameObject currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 100f, rootNode.transform.position.y + 50F, 100), Quaternion.identity);
-		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)nodes[0];
-		Camera.main.transform.GetComponent<ClickScript> ().favourite1 = currentRoot;
-		
-		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[0] = (GameObject)nodes[0];
-		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[2] = currentRoot;
-
-		foreach(GameObject currentNode in nodes)
-		{
-
-			if(count == 0 || count == 1 || count == 2)
-			{
-				folderParents[count2] = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
-				folderParents[count2].transform.GetComponent<TreeNode>().parent = currentRoot;
-
-
-				if(count == 1)
-				{
-					Camera.main.transform.GetComponent<ClickScript> ().searchFiles[3] = folderParents[count2];
-				}
-				
-
-				count2++;
-			}else{
-				thisNode =  (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x +100f, currentNode.transform.position.y +50F, 100), Quaternion.identity);
-				thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-			}
-
-			count++;
-		}
-
-		currentRoot = (GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 100f, rootNode.transform.position.y -50F,100), Quaternion.identity);
-		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)nodes[3];
-
-		foreach(GameObject currentNode in nodes)
-		{
-			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 100f, currentNode.transform.position.y - 50f, 100), Quaternion.identity);
-			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-		}
-
-
-		// Child of child
-		currentRoot = (GameObject)Instantiate(rootNode, new Vector3(rootNode.transform.position.x + 300f, rootNode.transform.position.y +120f, 200), Quaternion.identity);
-		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[0];
-
-		foreach(GameObject currentNode in nodes)
-		{
-
-
-			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 120f, 200), Quaternion.identity);
-			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-		}
-
-		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 60f, 200), Quaternion.identity);
-		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[1];
-		Camera.main.transform.GetComponent<ClickScript> ().favourite2 = currentRoot;
-		Camera.main.transform.GetComponent<ClickScript> ().searchFiles[5] = currentRoot;
-
-		count = 0;
-		foreach(GameObject currentNode in nodes)
-		{
-			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y + 60f, 200), Quaternion.identity);
-			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-
-			if(count == 2)
-			{
-				Camera.main.transform.GetComponent<ClickScript> ().searchFiles[4] = thisNode;
-			}
-
-			count++;
-		}
-
-		currentRoot = (GameObject)Instantiate (rootNode, new Vector3 (rootNode.transform.position.x + 300f, rootNode.transform.position.y + 0f, 200), Quaternion.identity);
-		currentRoot.transform.GetComponent<TreeNode>().parent = (GameObject)folderParents[2];
-
-		foreach(GameObject currentNode in nodes)
-		{
-			thisNode = (GameObject)Instantiate(currentNode, new Vector3(currentNode.transform.position.x + 300f, currentNode.transform.position.y+ 0f, 200), Quaternion.identity);
-			thisNode.transform.GetComponent<TreeNode>().parent = currentRoot;
-		}*/
+		Camera.main.transform.GetComponent<ClickScript> ().homeFolder = rootNode;
+		Camera.main.transform.GetComponent<ClickScript> ().nodes = nodes;
 	}
 
-	public void reload(TreeNode newNode)
+	public void reload (TreeNode newNode)
 	{
 		deleteAll ();
 		int cutoffPoint = 0;
@@ -161,39 +74,22 @@ public class FileBrowser : MonoBehaviour
 			cutoffPoint = 2;
 		}
 
-		/*
-		// Reset the back node
-		rootPath = "";
-		string [] newPath = newNode.path.Split(slash);
-		for(int i = 0; i < newPath.Length - cutoffPoint; i++)
-		{
-			rootPath += newPath[i] + slash.ToString();
-		}
-
-
-		backNode = (GameObject)Instantiate(back.gameObject, new Vector3(-20, 0, 0), Quaternion.identity);
-		backNode.GetComponent<TreeNode>().setId(rootPath);
-		backNode.GetComponent<TreeNode>().setPath(rootPath);
-		backNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Back);
-		*/
-
 		// Reset the root node
 
 		currentDirectory = newNode.path;
-		rootNode = (GameObject)Instantiate(rootFolder.gameObject, new Vector3(0, 0, -5), Quaternion.identity);
+		rootNode = (GameObject)Instantiate (rootFolder.gameObject, new Vector3 (0, 0, -5), Quaternion.identity);
 		rootNode.GetComponent<TreeNode> ().setId (newNode.ID);
-		rootNode.GetComponent<TreeNode>().setPath(currentDirectory);
-		rootNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.RootNode);
+		rootNode.GetComponent<TreeNode> ().setPath (currentDirectory);
+		rootNode.GetComponent<TreeNode> ().setFileType (TreeNode.FileType.RootNode);
 		//rootNode.GetComponentInChildren<TextMesh> ().text = newNode.ID;
 
 		TraverseTree (currentDirectory);
 	}
 
-	public void deleteAll()
+	public void deleteAll ()
 	{
 		// Delete all the child nodes
-		foreach(GameObject currentNode in nodes)
-		{
+		foreach (GameObject currentNode in nodes) {
 			Destroy (currentNode);
 		}
 
@@ -202,91 +98,222 @@ public class FileBrowser : MonoBehaviour
 		Destroy (backNode);
 	}
 
-	public void TraverseTree (string root){
+	public void TraverseTree (string root)
+	{
 
+		int directoryCount = 0;
+		int objectCount = 1;
 		GameObject currentNode = rootNode;
 
-		//try {
-
-			Stack<GameObject> dirs = new Stack<GameObject> ();
+		Stack<GameObject> dirs = new Stack<GameObject> ();
 		
-			if (!System.IO.Directory.Exists (root)) {
-				Debug.Log ("Root doesnt exist");
-				throw new ArgumentException ();
-			}
+		if (!System.IO.Directory.Exists (root)) {
+			Debug.Log ("Root doesnt exist");
+			throw new ArgumentException ();
+		}
 
-			dirs.Push (rootNode);
+		dirs.Push (rootNode);
 		
-			while (dirs.Count > 0) {
+		while (dirs.Count > 0) {
 
-				// Get the file and folders (Sub-directories)
-				string[] subDirs;
-				string[] files = null;
-				string currentDir = dirs.Pop ().GetComponent<TreeNode>().path;
+			// Get the file and folders (Sub-directories)
+			string[] subDirs;
+			string[] files = null;
+			GameObject parent = dirs.Pop ();
+			string currentDir = parent.GetComponent<TreeNode> ().path;
+		
+			subDirs = System.IO.Directory.GetDirectories (currentDir);
+			files = System.IO.Directory.GetFiles (currentDir);
 
-				subDirs = System.IO.Directory.GetDirectories (currentDir);
-				files = System.IO.Directory.GetFiles (currentDir);
+			if(subDirs.Length != 0)
+			{
+				// Instantiate the root	
+				if (directoryCount != 0) {
+					
+					Vector3 position = parent.transform.position;
+					
+					if (parent.GetComponent<TreeNode>().objectPosition == 1) {
+						position.x += (0 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 2) {
+						position.x += (160 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 3) {
+						position.x += (240 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 4) {
+						position.x += (160 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 5) {
+						position.x += (0 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 6) {
+						position.x -= (160);
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 7) {
+						position.x -= (240 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 8) {
+						position.x -= (160 );
+					}
+					
+					position.z += 100;
+					
+					if (parent.GetComponent<TreeNode>().objectPosition == 1) {
+						position.y += (120);
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 2) {
+						position.y += (80);
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 3) {
+						position.y += (0 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 4) {
+						position.y -= (80 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 5) {
+						position.y -= (120 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 6) {
+						position.y -= (80 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 7) {
+						position.y += (0 );
+					} else if (parent.GetComponent<TreeNode>().objectPosition == 8) {
+						position.y += (80 );
+					}
+					
+					currentNode = (GameObject)Instantiate (rootFolder.gameObject, position, Quaternion.identity);
+					currentNode.GetComponent<TreeNode> ().parent = parent;
+					currentNode.GetComponent<TreeNode> ().drawLine (parent);
+					currentNode.GetComponent<TreeNode> ().setId (currentDirectory);
+					currentNode.GetComponent<TreeNode> ().setPath (currentDirectory);
+					currentNode.GetComponent<TreeNode> ().setFileType (TreeNode.FileType.RootNode);
+					currentNode.GetComponentInChildren<TextMesh> ().GetComponent<MeshRenderer> ().sortingOrder = 1;
+					nodes.Add (currentNode);
+				}
 
 				// Iterate through the folders
 				foreach (string str in subDirs) {
-
-					Debug.Log (str);
-
-					string [] path = str.Split(slash);
-
+					
+					string [] path = str.Split (slash);
+					
 					//Vector3 position = folderPositions[folderCount];
-					Vector3 position = folderPositions[0];
-					GameObject folderNode = (GameObject)Instantiate(folder.gameObject, position, Quaternion.identity);
-					folderNode.GetComponent<TreeNode>().drawLine(currentNode);
-					folderNode.GetComponent<TreeNode>().setId(path[path.Length - 1]);
-					folderNode.GetComponent<TreeNode>().setPath(str);
-					folderNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.Folder);
-					folderNode.GetComponentInChildren<TextMesh> ().text = path[path.Length - 1];
+					Vector3 position = positions[objectCount];
+					Vector3 parentPosition = currentNode.transform.position;
 
-					currentNode.GetComponent<TreeNode>().addChild (folderNode);
-					nodes.Add(folderNode);
-					dirs.Push(folderNode);
+					if (objectCount == 1) {
+						position.x += (0 + parentPosition.x);
+					} else if (objectCount == 2) {
+						position.x += (10 + parentPosition.x);
+					} else if (objectCount == 3) {
+						position.x += (15 + parentPosition.x);
+					} else if (objectCount == 4) {
+						position.x += (10 + parentPosition.x);
+					} else if (objectCount == 5) {
+						position.x += (0 + parentPosition.x);
+					} else if (objectCount == 6) {
+						position.x = (parentPosition.x - 10);
+					} else if (objectCount == 7) {
+						position.x = (parentPosition.x - 15);
+					} else if (objectCount == 8) {
+						position.x = (parentPosition.x - 10);
+					}
+					
+					position.z += parentPosition.z;
+					
+					if (objectCount == 1) {
+						position.y += (15 + parentPosition.y);
+					} else if (objectCount == 2) {
+						position.y += (10 + parentPosition.y);
+					} else if (objectCount == 3) {
+						position.y += (0 + parentPosition.y);
+					} else if (objectCount == 4) {
+						position.y += (parentPosition.y - 10);
+					} else if (objectCount == 5) {
+						position.y += (parentPosition.y - 15);
+					} else if (objectCount == 6) {
+						position.y += (parentPosition.y - 10);
+					} else if (objectCount == 7) {
+						position.y += (0 + parentPosition.y);
+					} else if (objectCount == 8) {
+						position.y += (10 + parentPosition.y);
+					}
+					
+					GameObject folderNode = (GameObject)Instantiate (folder.gameObject, position, Quaternion.identity);
+					folderNode.GetComponent<TreeNode> ().parent = currentNode;
+					folderNode.GetComponent<TreeNode> ().drawLine (currentNode);
+					folderNode.GetComponent<TreeNode> ().setId (path [path.Length - 1]);
+					folderNode.GetComponent<TreeNode> ().setPath (str);
+					folderNode.GetComponent<TreeNode> ().setFileType (TreeNode.FileType.Folder);
+					folderNode.GetComponent<TreeNode> ().setObjectPosition (objectCount);
+					folderNode.GetComponentInChildren<TextMesh> ().text = path [path.Length - 1];
+					folderNode.GetComponentInChildren<TextMesh> ().GetComponent<MeshRenderer> ().sortingOrder = 1;
+
+
+					currentNode.GetComponent<TreeNode> ().addChild (folderNode);
+					nodes.Add (folderNode);
+					dirs.Push (folderNode);
 					folderCount++;
+					objectCount++;
 				}
-
-
-
+			
 				// Iterate through the files
 				foreach (string fileName in files) {
+					
+					string [] path = fileName.Split (slash);
+					
+					//Vector3 position = folderPositions[folderCount];
+					Vector3 position = positions[objectCount];
 
-					System.IO.FileInfo fi = new System.IO.FileInfo (fileName);
-					//Vector3 position = filePositions[fileCount];
-				Vector3 position = filePositions[0];
+					Vector3 parentPosition = currentNode.transform.position;
 
-					GameObject fileNode = (GameObject)Instantiate(file.gameObject, position, Quaternion.identity);
-					fileNode.GetComponent<TreeNode>().drawLine(rootNode);
-					fileNode.GetComponent<TreeNode>().setId(fi.Name);
-					fileNode.GetComponent<TreeNode>().setPath(currentDirectory + fi.Name);
-					fileNode.GetComponent<TreeNode>().setFileType(TreeNode.FileType.File);
-					fileNode.GetComponentInChildren<TextMesh> ().text = fi.Name;
+					if (objectCount == 1) {
+						position.x += (0 + parentPosition.x);
+					} else if (objectCount == 2) {
+						position.x += (10 + parentPosition.x);
+					} else if (objectCount == 3) {
+						position.x += (15 + parentPosition.x);
+					} else if (objectCount == 4) {
+						position.x += (10 + parentPosition.x);
+					} else if (objectCount == 5) {
+						position.x += (0 + parentPosition.x);
+					} else if (objectCount == 6) {
+						position.x = (parentPosition.x - 20);
+					} else if (objectCount == 7) {
+						position.x = (parentPosition.x - 25);
+					} else if (objectCount == 8) {
+						position.x = (parentPosition.x - 20);
+					}
+					
+					position.z += parentPosition.z;
+					
+					if (objectCount == 1) {
+						position.y += (15 + parentPosition.y);
+					} else if (objectCount == 2) {
+						position.y += (10 + parentPosition.y);
+					} else if (objectCount == 3) {
+						position.y += (0 + parentPosition.y);
+					} else if (objectCount == 4) {
+						position.y += (parentPosition.y - 10);
+					} else if (objectCount == 5) {
+						position.y += (parentPosition.y - 15);
+					} else if (objectCount == 6) {
+						position.y += (parentPosition.y - 10);
+					} else if (objectCount == 7) {
+						position.y += (0 + parentPosition.y);
+					} else if (objectCount == 8) {
+						position.y += (10 + parentPosition.y);
+					}
+					
+					GameObject folderNode = (GameObject)Instantiate (file.gameObject, position, Quaternion.identity);
+					folderNode.GetComponent<TreeNode> ().parent = currentNode;
+					folderNode.GetComponent<TreeNode> ().drawLine (currentNode);
+					folderNode.GetComponent<TreeNode> ().setId (path [path.Length - 1]);
+					folderNode.GetComponent<TreeNode> ().setPath (fileName);
+					folderNode.GetComponent<TreeNode> ().setFileType (TreeNode.FileType.Folder);
+					folderNode.GetComponent<TreeNode> ().setObjectPosition (objectCount);
+					folderNode.GetComponentInChildren<TextMesh> ().text = path [path.Length - 1];
+					folderNode.GetComponentInChildren<TextMesh> ().GetComponent<MeshRenderer> ().sortingOrder = 1;
 
-					currentNode.GetComponent<TreeNode>().addChild (fileNode);
-					nodes.Add(fileNode);
+					currentNode.GetComponent<TreeNode> ().addChild (folderNode);
+					nodes.Add (folderNode);
 					fileCount++;
+					objectCount++;
 				}
-
-				//currentNode = currentNode.GetComponent<TreeNode>().getChild(folderNode);
 			}
 
-	/*
-	 * 	} catch (Exception e) {
-
-			if (e is UnauthorizedAccessException || e is System.IO.DirectoryNotFoundException) {
-				Debug.Log ("An error has occured: " + e.Message);
-			}else{
-				Debug.Log ("A general error has occured: " + e.Message);
-			}
+			// Move to the next directory 
+			directoryCount++;
+			objectCount = 1;
 		}
-			 */
-
-
-		rootNode = currentNode;
-
 	}
 }
 

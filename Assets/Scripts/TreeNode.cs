@@ -10,9 +10,11 @@ public class TreeNode : MonoBehaviour
 	
 	FileType fileType;
 	public enum FileType {RootNode, Folder, File, Back};
+	public int objectPosition = 0;
 	public TreeNode Parent { get; private set; }
 	private Dictionary<string, TreeNode> _children = new Dictionary<string, TreeNode>();
 	public GameObject parent;
+	public bool visited = false;
 
 	void Start()
 	{
@@ -60,6 +62,12 @@ public class TreeNode : MonoBehaviour
 		this.path = path;
 	}
 
+	public void setObjectPosition(int _objectPosition)
+	{
+		this.objectPosition = _objectPosition;
+	}
+
+
 	public void setFileType(FileType fileType)
 	{
 		this.fileType = fileType;
@@ -78,7 +86,7 @@ public class TreeNode : MonoBehaviour
 		}
 		
 		item.GetComponent<TreeNode>().Parent = this;
-		this._children.Add(item.GetComponent<TreeNode>().ID, item.GetComponent<TreeNode>());
+		this._children.Add(item.GetComponent<TreeNode>().path, item.GetComponent<TreeNode>());
 	}
 
 	// Getters
@@ -101,6 +109,12 @@ public class TreeNode : MonoBehaviour
 	{
 		return fileType;
 	}
+
+	
+	public int getPosition()
+	{
+		return objectPosition;
+	}
 	
 	public GameObject getGameObject()
 	{
@@ -113,10 +127,9 @@ public class TreeNode : MonoBehaviour
 
 
 
-		if (fileType == TreeNode.FileType.RootNode) {
-			Vector3 position = new Vector3 ( transform.position.x, transform.position.y, transform.position.z - 100f);
-			Camera.main.transform.position = position;
-		} /*else if ((fileType == TreeNode.FileType.Folder) || (fileType == TreeNode.FileType.Back)) {
+		Vector3 position = new Vector3 ( transform.position.x, transform.position.y, transform.position.z - 100f);
+		Camera.main.transform.position = position;
+		/*else if ((fileType == TreeNode.FileType.Folder) || (fileType == TreeNode.FileType.Back)) {
 			//GameObject.Find("Controller").GetComponent<FileBrowser>().reload(this);
 
 		} else if (fileType == TreeNode.FileType.File){
